@@ -7,13 +7,13 @@
 set -euo pipefail
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly SERVICE_USER="mysql-backup"
-readonly CONFIG_DIR="/etc/mysql-backup"
-readonly INSTALL_BIN="/usr/local/bin/mysql-backup"
-readonly CRON_FILE="/etc/cron.d/mysql-backup"
-readonly LOGROTATE_FILE="/etc/logrotate.d/mysql-backup"
-TEMP_DIR="/var/tmp/mysql-backup"
-LOG_FILE="/var/log/mysql-backup.log"
+readonly SERVICE_USER="backuptoaws"
+readonly CONFIG_DIR="/etc/backup-to-aws"
+readonly INSTALL_BIN="/usr/local/bin/backup-to-aws"
+readonly CRON_FILE="/etc/cron.d/backup-to-aws"
+readonly LOGROTATE_FILE="/etc/logrotate.d/backup-to-aws"
+TEMP_DIR="/var/tmp/backup-to-aws"
+LOG_FILE="/var/log/backup-to-aws.log"
 
 # =============================================================================
 # Helpers
@@ -241,7 +241,7 @@ cat > "$CRON_FILE" <<EOF
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-0 2 * * * ${SERVICE_USER} /usr/local/bin/mysql-backup >/dev/null 2>&1
+0 2 * * * ${SERVICE_USER} /usr/local/bin/backup-to-aws >/dev/null 2>&1
 EOF
 
 chmod 644 "$CRON_FILE"
@@ -252,7 +252,7 @@ chmod 644 "$CRON_FILE"
 
 info "Configurando logrotate → ${LOGROTATE_FILE}"
 cat > "$LOGROTATE_FILE" <<EOF
-/var/log/mysql-backup.log {
+/var/log/backup-to-aws.log {
     weekly
     rotate 4
     compress
@@ -286,6 +286,6 @@ echo "    Temp:        ${TEMP_DIR}/ (modo local)"
 echo ""
 echo "  Próximos passos:"
 echo "    1. Edite ${CONFIG_DIR}/backup.conf (S3_BUCKET, DATABASES, etc.)"
-echo "    2. Teste: sudo -u ${SERVICE_USER} mysql-backup"
+echo "    2. Teste: sudo -u ${SERVICE_USER} backup-to-aws"
 echo "    3. Verifique no S3: aws s3 ls s3://BUCKET/PREFIX/"
 echo "============================================================"

@@ -6,10 +6,10 @@
 # =============================================================================
 set -euo pipefail
 
-readonly SCRIPT_NAME="mysql-backup"
-readonly LOCK_FILE="/var/tmp/mysql-backup/${SCRIPT_NAME}.lock"
-readonly CONFIG_FILE="${MYSQL_BACKUP_CONF:-/etc/mysql-backup/backup.conf}"
-readonly MYCNF_FILE="/etc/mysql-backup/.my.cnf"
+readonly SCRIPT_NAME="backuptoaws"
+readonly LOCK_FILE="/var/tmp/backup-to-aws/${SCRIPT_NAME}.lock"
+readonly CONFIG_FILE="${MYSQL_BACKUP_CONF:-/etc/backup-to-aws/backup.conf}"
+readonly MYCNF_FILE="/etc/backup-to-aws/.my.cnf"
 readonly TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 
 SUCCESS_COUNT=0
@@ -23,7 +23,7 @@ FAILED_DBS=""
 log() {
     local level="$1"; shift
     local msg="[$(date '+%Y-%m-%d %H:%M:%S')] [${level}] $*"
-    echo "$msg" | tee -a "${LOG_FILE:-/var/log/mysql-backup.log}"
+    echo "$msg" | tee -a "${LOG_FILE:-/var/log/backup-to-aws.log}"
 }
 
 log_info()  { log "INFO"  "$@"; }
@@ -40,7 +40,7 @@ send_notification() {
         return
     fi
 
-    local subject="[mysql-backup] FALHA em $(hostname) — ${FAIL_COUNT} banco(s)"
+    local subject="[backuptoaws] FALHA em $(hostname) — ${FAIL_COUNT} banco(s)"
     local body
     body="Backup MySQL finalizado com falhas em $(hostname).
 
@@ -84,11 +84,11 @@ fi
 source "$CONFIG_FILE"
 
 # Defaults (antes da validação para que LOG_FILE esteja disponível para die())
-LOG_FILE="${LOG_FILE:-/var/log/mysql-backup.log}"
+LOG_FILE="${LOG_FILE:-/var/log/backup-to-aws.log}"
 UPLOAD_MODE="${UPLOAD_MODE:-stream}"
 GZIP_LEVEL="${GZIP_LEVEL:-6}"
 LOCAL_RETENTION_DAYS="${LOCAL_RETENTION_DAYS:-3}"
-TEMP_DIR="${TEMP_DIR:-/var/tmp/mysql-backup}"
+TEMP_DIR="${TEMP_DIR:-/var/tmp/backup-to-aws}"
 NOTIFICATION_EMAIL="${NOTIFICATION_EMAIL:-}"
 
 # Valida variáveis obrigatórias
