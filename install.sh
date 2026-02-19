@@ -58,7 +58,10 @@ fi
 # aws cli
 if ! command -v aws &>/dev/null; then
     info "Instalando AWS CLI..."
-    apt-get update -qq && apt-get install -y -qq awscli
+    if ! apt-get update -qq || ! apt-get install -y -qq awscli 2>/dev/null; then
+        info "Tentando via snap..."
+        snap install aws-cli --classic || die "Falha ao instalar AWS CLI"
+    fi
 fi
 
 # mailutils (para notificações)
