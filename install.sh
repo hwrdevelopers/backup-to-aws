@@ -242,7 +242,7 @@ info "Configurando cron (02:00 diário) → ${CRON_FILE}"
 cat > "$CRON_FILE" <<EOF
 # MySQL Backup to S3 — execução diária às 02:00
 SHELL=/bin/bash
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 0 2 * * * ${SERVICE_USER} /usr/local/bin/backup-to-aws >/dev/null 2>&1
 EOF
