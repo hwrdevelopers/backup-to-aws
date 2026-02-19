@@ -40,20 +40,16 @@ send_notification() {
         return
     fi
 
-    local msg="*[FALHA] Backup MySQL — $(hostname)*
-
+    local msg="[FALHA] Backup MySQL - $(hostname)
 Timestamp: ${TIMESTAMP}
 Sucessos: ${SUCCESS_COUNT}
 Falhas: ${FAIL_COUNT}
-
 Bancos com falha:
-${FAILED_DBS}
-Log: \`${LOG_FILE}\`"
+${FAILED_DBS}Log: ${LOG_FILE}"
 
     curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
         -d chat_id="${TELEGRAM_CHAT_ID}" \
-        -d parse_mode="Markdown" \
-        -d text="${msg}" >/dev/null 2>&1 || \
+        --data-urlencode "text=${msg}" >/dev/null 2>&1 || \
         log_warn "Falha ao enviar notificação via Telegram"
 }
 
