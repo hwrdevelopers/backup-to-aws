@@ -10,7 +10,7 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SERVICE_USER="backuptoaws"
 readonly CONFIG_DIR="/etc/backup-to-aws"
 readonly INSTALL_BIN="/usr/local/bin/backup-to-aws"
-readonly CRON_FILE="/etc/cron.d/backup-to-aws"
+readonly CRON_FILE="/etc/cron.d/backuptoaws"
 readonly LOGROTATE_FILE="/etc/logrotate.d/backup-to-aws"
 TEMP_DIR="/var/tmp/backup-to-aws"
 LOG_FILE="/var/log/backup-to-aws.log"
@@ -55,13 +55,15 @@ if ! command -v gzip &>/dev/null; then
     die "gzip não encontrado."
 fi
 
-# aws cli
+# aws cli (instalador oficial — instala em /usr/local/bin/aws)
 if ! command -v aws &>/dev/null; then
-    info "Instalando AWS CLI..."
-    if ! apt-get update -qq || ! apt-get install -y -qq awscli 2>/dev/null; then
-        info "Tentando via snap..."
-        snap install aws-cli --classic || die "Falha ao instalar AWS CLI"
-    fi
+    info "Instalando AWS CLI v2..."
+    apt-get update -qq && apt-get install -y -qq unzip curl 2>/dev/null || true
+    curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+    unzip -qo /tmp/awscliv2.zip -d /tmp
+    /tmp/aws/install
+    rm -rf /tmp/awscliv2.zip /tmp/aws
+    command -v aws &>/dev/null || die "Falha ao instalar AWS CLI"
 fi
 
 # mailutils (para notificações)
@@ -242,7 +244,7 @@ info "Configurando cron (02:00 diário) → ${CRON_FILE}"
 cat > "$CRON_FILE" <<EOF
 # MySQL Backup to S3 — execução diária às 02:00
 SHELL=/bin/bash
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 0 2 * * * ${SERVICE_USER} /usr/local/bin/backup-to-aws >/dev/null 2>&1
 EOF

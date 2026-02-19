@@ -9,7 +9,7 @@ set -euo pipefail
 readonly SERVICE_USER="backuptoaws"
 readonly CONFIG_DIR="/etc/backup-to-aws"
 readonly INSTALL_BIN="/usr/local/bin/backup-to-aws"
-readonly CRON_FILE="/etc/cron.d/backup-to-aws"
+readonly CRON_FILE="/etc/cron.d/backuptoaws"
 readonly LOGROTATE_FILE="/etc/logrotate.d/backup-to-aws"
 readonly LOG_FILE="/var/log/backup-to-aws.log"
 readonly TEMP_DIR="/var/tmp/backup-to-aws"
