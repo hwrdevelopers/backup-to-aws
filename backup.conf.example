@@ -1,0 +1,52 @@
+# =============================================================================
+# MySQL Backup to S3 — Configuração
+# =============================================================================
+# Copie este arquivo para /etc/mysql-backup/backup.conf e ajuste os valores.
+# Permissões: chmod 600 /etc/mysql-backup/backup.conf
+# =============================================================================
+
+# --- MySQL -------------------------------------------------------------------
+# Host e porta do servidor MySQL
+MYSQL_HOST="localhost"
+MYSQL_PORT="3306"
+
+# Bancos para backup: lista separada por espaço ou "ALL" para todos
+# Exemplos:
+#   DATABASES="ALL"
+#   DATABASES="app_production app_staging"
+DATABASES="ALL"
+
+# --- AWS S3 ------------------------------------------------------------------
+# Bucket de destino (sem s3:// prefix)
+S3_BUCKET="my-backup-bucket"
+
+# Prefixo dentro do bucket. ${HOSTNAME} é a variável built-in do bash.
+S3_PREFIX="mysql-backups/${HOSTNAME}"
+
+# Região do bucket
+AWS_REGION="us-east-1"
+
+# --- Upload ------------------------------------------------------------------
+# Modo de upload:
+#   stream — pipe direto mysqldump | gzip | aws s3 cp (sem uso de disco)
+#   local  — salva .sql.gz em disco, depois envia para S3
+UPLOAD_MODE="stream"
+
+# --- Compressão --------------------------------------------------------------
+# Nível de compressão gzip (1=rápido, 9=máximo)
+GZIP_LEVEL=6
+
+# --- Retenção local ----------------------------------------------------------
+# Dias para manter backups locais (usado apenas no modo "local")
+LOCAL_RETENTION_DAYS=3
+
+# --- Diretórios e logs -------------------------------------------------------
+# Diretório temporário (usado apenas no modo "local")
+TEMP_DIR="/var/tmp/mysql-backup"
+
+# Arquivo de log
+LOG_FILE="/var/log/mysql-backup.log"
+
+# --- Notificação -------------------------------------------------------------
+# Email para notificação em caso de falha (vazio = desabilitado)
+NOTIFICATION_EMAIL=""
