@@ -12,8 +12,8 @@ readonly CONFIG_DIR="/etc/mysql-backup"
 readonly INSTALL_BIN="/usr/local/bin/mysql-backup"
 readonly CRON_FILE="/etc/cron.d/mysql-backup"
 readonly LOGROTATE_FILE="/etc/logrotate.d/mysql-backup"
-readonly TEMP_DIR="/var/tmp/mysql-backup"
-readonly LOG_FILE="/var/log/mysql-backup.log"
+TEMP_DIR="/var/tmp/mysql-backup"
+LOG_FILE="/var/log/mysql-backup.log"
 
 # =============================================================================
 # Helpers
