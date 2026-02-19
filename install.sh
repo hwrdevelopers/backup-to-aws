@@ -121,9 +121,20 @@ else
     info "Configurando credenciais MySQL para backup"
     echo ""
 
-    MYSQL_USER="$(ask "  Usuário MySQL" "backup_user")"
-    read -rsp "  Senha MySQL: " MYSQL_PASS
+    MYSQL_USER="$(ask "  Usuário MySQL para backup" "backup_user")"
+    read -rsp "  Senha para o usuário ${MYSQL_USER}: " MYSQL_PASS
     echo ""
+
+    info "Criando usuário ${MYSQL_USER} no MySQL..."
+    if mysql -e "
+        CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASS}';
+        GRANT SELECT, SHOW VIEW, TRIGGER, EVENT, PROCESS ON *.* TO '${MYSQL_USER}'@'localhost';
+        FLUSH PRIVILEGES;
+    " 2>/dev/null; then
+        info "Usuário ${MYSQL_USER} criado no MySQL"
+    else
+        warn "Falha ao criar usuário no MySQL — crie manualmente"
+    fi
 
     (umask 077; cat > "${CONFIG_DIR}/.my.cnf" <<EOF
 [client]
