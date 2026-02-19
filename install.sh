@@ -124,8 +124,8 @@ else
     info "Configurando credenciais MySQL para backup"
     echo ""
 
-    MYSQL_USER="$(ask "  Usuário MySQL para backup" "backup_user")"
-    read -rsp "  Senha para o usuário ${MYSQL_USER}: " MYSQL_PASS
+    MYSQL_USER="backuptoaws"
+    read -rsp "  Senha para o usuário MySQL ${MYSQL_USER}: " MYSQL_PASS
     echo ""
 
     info "Criando usuário ${MYSQL_USER} no MySQL..."
