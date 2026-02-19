@@ -78,8 +78,11 @@ if id "$SERVICE_USER" &>/dev/null; then
     info "Usuário ${SERVICE_USER} já existe"
 else
     info "Criando usuário de sistema → ${SERVICE_USER}"
-    useradd --system --no-create-home --shell /usr/sbin/nologin "$SERVICE_USER"
+    useradd --system --create-home --home-dir /home/"$SERVICE_USER" --shell /usr/sbin/nologin "$SERVICE_USER"
 fi
+
+mkdir -p /home/"$SERVICE_USER"
+chown "$SERVICE_USER":"$SERVICE_USER" /home/"$SERVICE_USER"
 
 # =============================================================================
 # Estrutura de diretórios
@@ -177,6 +180,44 @@ if sudo -u "$SERVICE_USER" mysql --defaults-extra-file="${CONFIG_DIR}/.my.cnf" \
 else
     warn "Falha na conexão MySQL — verifique as credenciais em ${CONFIG_DIR}/.my.cnf"
     warn "O script foi instalado, mas o backup não funcionará até corrigir a conexão"
+fi
+
+# =============================================================================
+# Credenciais AWS
+# =============================================================================
+
+AWS_CREDS_DIR="/home/${SERVICE_USER}/.aws"
+
+if [[ -f "${AWS_CREDS_DIR}/credentials" ]]; then
+    info "Credenciais AWS já existem"
+else
+    echo ""
+    info "Configurando credenciais AWS para o usuário ${SERVICE_USER}"
+    echo ""
+
+    AWS_KEY="$(ask "  AWS Access Key ID")"
+    read -rsp "  AWS Secret Access Key: " AWS_SECRET
+    echo ""
+
+    mkdir -p "$AWS_CREDS_DIR"
+
+    (umask 077; cat > "${AWS_CREDS_DIR}/credentials" <<EOF
+[default]
+aws_access_key_id=${AWS_KEY}
+aws_secret_access_key=${AWS_SECRET}
+EOF
+    )
+
+    (umask 077; cat > "${AWS_CREDS_DIR}/config" <<EOF
+[default]
+region=${AWS_REGION:-us-east-1}
+EOF
+    )
+
+    chown -R "$SERVICE_USER":"$SERVICE_USER" "$AWS_CREDS_DIR"
+
+    unset AWS_KEY AWS_SECRET
+    info "Credenciais AWS salvas em ${AWS_CREDS_DIR}"
 fi
 
 # =============================================================================
