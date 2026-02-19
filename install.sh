@@ -81,7 +81,7 @@ if id "$SERVICE_USER" &>/dev/null; then
     info "Usuário ${SERVICE_USER} já existe"
 else
     info "Criando usuário de sistema → ${SERVICE_USER}"
-    useradd --system --create-home --home-dir /home/"$SERVICE_USER" --shell /usr/sbin/nologin "$SERVICE_USER"
+    useradd --system --create-home --home-dir /home/"$SERVICE_USER" --shell /bin/bash "$SERVICE_USER"
 fi
 
 mkdir -p /home/"$SERVICE_USER"
