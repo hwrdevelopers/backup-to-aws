@@ -21,7 +21,7 @@ DATABASES="ALL"
 S3_BUCKET="my-backup-bucket"
 
 # Prefixo dentro do bucket. ${HOSTNAME} é a variável built-in do bash.
-S3_PREFIX="backuptoawss/${HOSTNAME}"
+S3_PREFIX="backup-to-aws/${HOSTNAME}"
 
 # Região do bucket
 AWS_REGION="us-east-1"
