@@ -36,29 +36,25 @@ die() {
 }
 
 send_notification() {
-    if [[ -z "${NOTIFICATION_EMAIL:-}" ]]; then
+    if [[ -z "${TELEGRAM_BOT_TOKEN:-}" || -z "${TELEGRAM_CHAT_ID:-}" ]]; then
         return
     fi
 
-    local subject="[backuptoaws] FALHA em $(hostname) — ${FAIL_COUNT} banco(s)"
-    local body
-    body="Backup MySQL finalizado com falhas em $(hostname).
+    local msg="*[FALHA] Backup MySQL — $(hostname)*
 
 Timestamp: ${TIMESTAMP}
-Sucessos:  ${SUCCESS_COUNT}
-Falhas:    ${FAIL_COUNT}
+Sucessos: ${SUCCESS_COUNT}
+Falhas: ${FAIL_COUNT}
 
 Bancos com falha:
 ${FAILED_DBS}
+Log: \`${LOG_FILE}\`"
 
-Verifique o log: ${LOG_FILE}"
-
-    if command -v mail &>/dev/null; then
-        echo "$body" | mail -s "$subject" "$NOTIFICATION_EMAIL" 2>/dev/null || \
-            log_warn "Falha ao enviar email de notificação"
-    else
-        log_warn "Comando 'mail' não encontrado — notificação por email não enviada"
-    fi
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id="${TELEGRAM_CHAT_ID}" \
+        -d parse_mode="Markdown" \
+        -d text="${msg}" >/dev/null 2>&1 || \
+        log_warn "Falha ao enviar notificação via Telegram"
 }
 
 cleanup_local() {
@@ -89,7 +85,8 @@ UPLOAD_MODE="${UPLOAD_MODE:-stream}"
 GZIP_LEVEL="${GZIP_LEVEL:-6}"
 LOCAL_RETENTION_DAYS="${LOCAL_RETENTION_DAYS:-3}"
 TEMP_DIR="${TEMP_DIR:-/var/tmp/backup-to-aws}"
-NOTIFICATION_EMAIL="${NOTIFICATION_EMAIL:-}"
+TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
+TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID:-}"
 
 # Valida variáveis obrigatórias
 for var in MYSQL_HOST MYSQL_PORT DATABASES S3_BUCKET S3_PREFIX AWS_REGION; do

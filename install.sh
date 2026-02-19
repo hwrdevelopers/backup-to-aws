@@ -66,12 +66,6 @@ if ! command -v aws &>/dev/null; then
     command -v aws &>/dev/null || die "Falha ao instalar AWS CLI"
 fi
 
-# mailutils (para notificações)
-if ! command -v mail &>/dev/null; then
-    info "Instalando mailutils..."
-    apt-get update -qq && apt-get install -y -qq mailutils 2>/dev/null || \
-        warn "Não foi possível instalar mailutils — notificações por email não funcionarão"
-fi
 
 info "Pré-requisitos OK"
 

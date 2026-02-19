@@ -47,6 +47,7 @@ TEMP_DIR="/var/tmp/backup-to-aws"
 # Arquivo de log
 LOG_FILE="/var/log/backup-to-aws.log"
 
-# --- Notificação -------------------------------------------------------------
-# Email para notificação em caso de falha (vazio = desabilitado)
-NOTIFICATION_EMAIL=""
+# --- Notificação via Telegram ------------------------------------------------
+# Token do bot e chat ID (vazios = desabilitado)
+TELEGRAM_BOT_TOKEN=""
+TELEGRAM_CHAT_ID=""
