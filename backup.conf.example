@@ -34,7 +34,7 @@ UPLOAD_MODE="stream"
 
 # --- Compressão --------------------------------------------------------------
 # Nível de compressão gzip (1=rápido, 9=máximo)
-GZIP_LEVEL=6
+GZIP_LEVEL=1
 
 # --- Retenção local ----------------------------------------------------------
 # Dias para manter backups locais (usado apenas no modo "local")
