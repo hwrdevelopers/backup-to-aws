@@ -58,7 +58,9 @@ fi
 # aws cli (instalador oficial — instala em /usr/local/bin/aws)
 if ! command -v aws &>/dev/null; then
     info "Instalando AWS CLI v2..."
-    apt-get update -qq && apt-get install -y -qq unzip curl 2>/dev/null || true
+    for cmd in unzip curl; do
+        command -v "$cmd" &>/dev/null || die "${cmd} não encontrado. Instale com: apt-get install ${cmd}"
+    done
     curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
     unzip -qo /tmp/awscliv2.zip -d /tmp
     /tmp/aws/install
